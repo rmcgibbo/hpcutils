@@ -41,7 +41,7 @@ def submit(qname_to_number):
     try:
         for qname, number in qname_to_number.iteritems():
             for i in range(number):
-                f = FILES.pop()
+                f = FILES.pop(0)
                 cmd = 'ssh %s qsub %s' % (qname, f)
                 subprocess.check_output(cmd, shell=True)
                 print 'Submitting %s' % f
@@ -70,8 +70,6 @@ for f in args.files:
 USER = os.environ['USER']
 
 FILES = [os.path.abspath(file) for file in args.files]
-# reverse files so that when we pop, we get them in the right order
-FILES = FILES[::-1]
 
 sleep_time = args.sleep_time * 60 # convert to seconds
 
