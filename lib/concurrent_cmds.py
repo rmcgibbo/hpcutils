@@ -7,9 +7,13 @@ processors concurrently.
 
 import subprocess
 import time
-def run(cmds, num_concurrent):
+def run(cmds, num_concurrent, sleep_time=0.1):
     '''Execute each command in the list of commands
-    cmds, num_concurrent at a time'''
+    cmds, num_concurrent at a time
+
+    At intervals of the sleep_time (seconds), wake up
+    and submit more of the commands.
+    '''
     current = []
     while len(cmds) > 0:
         while len(current) < num_concurrent and len(cmds) > 0:
@@ -17,8 +21,8 @@ def run(cmds, num_concurrent):
             sp = subprocess.Popen(cmd, bufsize=-1, shell=True)
             current.append((cmd,sp))
 
-        # sleep 0.1 s
-        time.sleep(0.1)
+        # sleep before submitting some more jobs
+        time.sleep(sleep_time)
         finished = []
         for cmd, sp in current:
             sp.poll()

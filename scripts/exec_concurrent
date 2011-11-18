@@ -12,6 +12,8 @@ try:
     parser = ArgumentParser(description='Execute commands concurrently')
     parser.add_argument('-n', type=int, default=12,
                         help='Number of concurrent processes to execute. Default=12')
+    parser.add_argument('-s', type=float, default=1.0,
+                        help='Time to sleep between checking if jobs have finished. Default = 1 s')
     parser.add_argument('file', type=file,
                         help='File containing commands, newline seperated.')
     args = parser.parse_args()
@@ -20,5 +22,8 @@ except IOError as e:
     print args
     sys.exit(1)
 
-commands = [line.strip() for line in args.file]
-concurrent_cmds.run(commands, args.n)
+lines = [line.strip() for line in args.file]
+commands = [line for line in lines if not (line is '' or line.startswith('#'))]
+num_concurrent = args.n
+sleep_time = args.s
+concurrent_cmds.run(commands, num_concurrent, sleep_time)
