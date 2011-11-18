@@ -1,0 +1,61 @@
+#!/usr/bin/env python
+'''
+Simple executable which takes a list of files and sends them back
+via ssh to your local workstation and then opens them using the mac
+open command.
+
+1) If your local workstation isn't a mac, you might not have the 'open'
+   command, but you still can probably modify this script to make it work for you.
+2) This script is only really convenient once you set up passwordless ssh access
+   from your remote server back to your local workstation.
+3) If you're sshing to your remote server on a nonstandard port (not 22), this
+   script will probably fail, but could be modified to work.
+4) The files are copied into the /tmp directory on your local machine.
+'''
+
+import sys, os
+import subprocess
+import hpcutils
+import yaml
+
+# load up config file
+config_file = os.path.join(sys.modules['hpcutils'].__path__[0], 'config/macopen.yaml')
+with open(config_file) as f:
+      config = yaml.load(f)
+
+if len(sys.argv) == 1:
+    print >> sys.stderr, 'Usage: %s <files_to_transfer_to_mac>+' % sys.argv[0]
+    sys.exit(1)
+if not os.environ.has_key('SSH_CLIENT'):
+    print >> sys.stderr, 'Error: %s: Cannot find SSH_CLIENT env var to send files back to' % sys.argv[0]
+    sys.exit(1)
+files = sys.argv[1:]
+for file in files:
+    if not (os.path.exists(file) and os.path.isfile(file)):
+        print >> sys.stderr, 'Error: %s: File does not exists %s' % (sys.argv[0], file)
+remote_files = ['/tmp/%s' % os.path.basename(f) for f in files]
+
+# get the ip address of the localhost from the env variable
+localhost = os.environ['SSH_CLIENT'].split()[0]
+# if a replacement is set in the config.yaml file for this ip address
+# then use the replacement
+if localhost in config['localhost']:
+   localhost = config['localhost'][os.environ['SSH_CLIENT'].split()[0]]
+
+
+# two commands to be executed
+copy_cmd = 'scp %s %s:/tmp/' % (' '.join(files), localhost)
+open_cmd = 'ssh %s "open %s"' % (localhost, ' '.join(remote_files))
+
+try:
+    subprocess.check_call(copy_cmd, shell=True)
+    subprocess.check_call(open_cmd, shell=True)
+except subprocess.CalledProcessError as e:
+    print >> sys.stderr, 'Error: %s:' % sys.argv[0],
+    print >> sys.stderr, e
+    sys.exit(1)
+except KeyboardInterrupt:
+    print >> sys.stderr, 'KeyboardInterrupt: %s: Exiting.' % sys.argv[0]
+    print >> sys.stderr, 'Considering installing passwordless ssh so'
+    print >> sys.stderr, 'that the copy and open commands will go fast'
+    sys.exit(1)

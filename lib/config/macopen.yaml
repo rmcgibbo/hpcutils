@@ -1,0 +1,9 @@
+#
+# Configuration options for the macopen script
+#
+---
+localhost:
+  # if the SSH_CLIENT env variable is /key/ then use
+  # /value/ as the path to the users machine instead
+  # this is useful if the user is tunneling
+  171.65.94.180: vspm10.stanford.edu
