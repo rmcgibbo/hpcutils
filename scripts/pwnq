@@ -5,7 +5,6 @@ Submit a bunch of jobs to the PBS queue(s)
 import sys, os, re
 import time
 import subprocess
-from collections import defaultdict
 from argparse import ArgumentParser
 import yaml
 import hpcutils
