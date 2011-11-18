@@ -7,16 +7,16 @@ import time
 import subprocess
 from collections import defaultdict
 from argparse import ArgumentParser
+import yaml
+import hpcutils
 from hpcutils import qdata
 
-QUEUES = [{'name': 'certainty-a.local',
-          'capacity': 8},
-          {'name': 'certainty-b.local',
-          'capacity': 8},
-          {'name': 'certainty-c.local',
-          'capacity': 8},
-          {'name': 'certainty-d.local',
-          'capacity': 8}]
+# load up config file, and get the queues and their capacity
+config_file = os.path.join(sys.modules['hpcutils'].__path__[0], 'config/pwnq.yaml')
+with open(config_file) as f:
+    config = yaml.load(f)
+QUEUES = config['queues']
+
 
 def check():
     '''Check each of queues for how many jobs you can currently submit to them'''
@@ -36,13 +36,14 @@ def check():
 
     return remaining_q_spots
 
+
 def submit(qname_to_number):
     '''Submit files'''
     try:
         for qname, number in qname_to_number.iteritems():
             for i in range(number):
                 f = FILES.pop()
-                cmd = 'ssh %s touch %s.touch' % (qname, f)
+                cmd = 'ssh %s qsub %s' % (qname, f)
                 subprocess.check_output(cmd, shell=True)
                 print 'Submitting %s' % f
     except IndexError:
@@ -81,4 +82,3 @@ while keep_going:
     keep_going = submit(name_to_number)
     if keep_going:
         time.sleep(sleep_time)
-

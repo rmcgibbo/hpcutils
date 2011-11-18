@@ -2,7 +2,7 @@ Some utilities for working on a hpc cluster
 
 1) macopen
    - This script scps a bunch of files to you mac and then
-     opens them up, using the mac open command. If you're
+     opens them up, using the mac 'open' command. If you're
      using a complicated tunnel setup such that the ip listen
      in your SSH_CLIENT env variable isn't the machine on which
      you want to open your files, you can set set your localhost
@@ -22,3 +22,10 @@ Some utilities for working on a hpc cluster
    - Note that the names of your queues and their capacities are set in
      the config file found at lib/config/pwnq.yaml. The queues are all
      assumed to be all from the same filesystem, but have seperate capacities
+
+4) exec_concurrent
+   - Execute a bunch of shell commands concurrently, n at a time. Wakes up
+     by default a few times a second to check if any have finished, and if
+     so submits more. Useful if you want to keep all your processors active.
+     Could be executed from within one of the pbs scripts submitted by pwnq
+     if you wanted to be fancy.
