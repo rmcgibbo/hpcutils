@@ -1,0 +1,14 @@
+#
+# Configuration options for the
+# pwnq script
+#
+---
+queues:
+  - name: certainty-a.local
+    capacity: 8
+  - name: certainty-b.local
+    capacity: 8
+  - name: certainty-c.local
+    capacity: 8
+  - name: certainty-d.local
+    capacity: 8
