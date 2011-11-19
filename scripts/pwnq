@@ -25,7 +25,9 @@ def check():
         remaining_q_spots[v['name']] = v['capacity']
         
     for i, myjobid in enumerate(myjobids):
+        print 'qstat -f'
         output = subprocess.check_output('qstat -f -e %s' % myjobid, shell=True)
+        print 'doneqstat -f'
 
         q = re.search('Job_Owner\s=\s%s@(.+)' % USER, output).group(1)
         if not q in [Q['name'] for Q in QUEUES]:
@@ -56,7 +58,7 @@ def submit(qname_to_number):
 parser = ArgumentParser(description='Pwn the Q')
 parser.add_argument('files', type=str, nargs='+',
                     help='pbs shell scripts to submit')
-parser.add_argument('-sleep_time', metavar='s', type=int,
+parser.add_argument('-sleep_time', metavar='s', type=float,
                     help='Time to sleep between submission attempts, in minutes. Default = 60',
                     default=60)
 
