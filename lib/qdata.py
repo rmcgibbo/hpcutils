@@ -3,21 +3,17 @@ import os
 import re
 import json
 import time
+import subprocess
 
 class Qdata:
     # The total number of nodes your cluster has
     NUM_NODES = 550
-    # =========================================
-    # The name of your pbs cluster which appears in the jobid
-    SERVER = 'certainty'
-    # =========================================
-
 
     def __init__(self):
         line_format = re.compile(
             '''^                     # start at beginning of string
                (?P<JOB_ID>\d+)       # numbers (the job id)
-               .%s.                  # the server name, right after the job id
+               (.+)                  # the server name, right after the job id
                \s+
                (?P<USER>\w+)         # the user name
                \s+
@@ -34,11 +30,11 @@ class Qdata:
                (?P<STATUS>[HRQE])     #Status. I believe this can only be H (hold) R (Running) Q (Queued) E (Error) ... What else?
                \s+                                                                                                                                                                    
                (?P<ELAP_TIME>([-]+|\d+:?\d*)) # elapsed time
-               ''' % (self.SERVER),
+               ''', #% (self.SERVER),
             re.VERBOSE)
 
         self.jobs = []
-        qstat = os.popen('/opt/torque/bin/qstat -R')
+        qstat = subprocess.check_output('qstat -R', shell=True).split('\n')
         for line in qstat:
             m = line_format.search(line)
             if m:
