@@ -33,7 +33,9 @@ Some utilities for working on a hpc cluster
 5) auto-git
    - mac specific (10.5+) python code, building off the FSEvents library, that
      tracks changes to files in the working directory and automatically commits    
-     every save, just like dropbox or something.
+     and pushes every time you create a new file, save a file, etc inside the   
+     folder that's being monitored, just like dropbox. Except you can browse  
+     your versions on github with its beautiful interface.
      
      To be better, it really should have its own config file, .auto-git, that 
      goes in the root of your repo and lets you specify your own ignore
