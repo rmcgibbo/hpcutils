@@ -40,6 +40,4 @@ Some utilities for working on a hpc cluster
      commits are every save.
      
      To be better, it really should have its own config file, .auto-git, that 
-     goes in the root of your repo and lets you specify your own ignore
-     
-     on experimental
+     goes in the root of your repo and lets you specify your own ignore.
