@@ -29,3 +29,8 @@ Some utilities for working on a hpc cluster
      so submits more. Useful if you want to keep all your processors active.
      Could be executed from within one of the pbs scripts submitted by pwnq
      if you wanted to be fancy.
+     
+5) auto-git
+   - mac specific (10.5+) python code, building off the FSEvents library, that
+     tracks changes to files in the working directory and automatically commits    
+     every save, just like dropbox or something
