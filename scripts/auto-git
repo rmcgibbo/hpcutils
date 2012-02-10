@@ -77,9 +77,12 @@ class Pusher(threading.Thread):
         
 def sigint_handler(signum, frame):
     "handler for signit that kills the FSEvent thread"
-    global STREAM, OBSERVER
+    global STREAM, OBSERVER, PUSHER
     OBSERVER.unschedule(STREAM)
     OBSERVER.stop()
+    
+    if PUSHER.have_changes():
+        PUSHER.push()
     sys.exit()
 
 def main():
@@ -104,8 +107,8 @@ def main():
     print "Monitoring..."
     
     # initialize the pusher
-    pusher = Pusher(interval=60*60) #push interval of 1 hour
-    pusher.start()
+    PUSHER = Pusher(interval=60*60) #push interval of 1 hour
+    PUSHER.start()
     
     # for some reason this seems necessary to get the signal handling
     # to work
