@@ -22,9 +22,13 @@ if size == 1:
 
 if rank == 0:
     signal.signal(signal.SIGALRM, handler)
-    signal.alarm(1)
-    commands = [l.strip() for l in sys.stdin.readlines()]
-    signal.alarm(0)
+    
+    if len(sys.argv) > 1:
+        commands = [l.strip() for l in open(sys.argv[1]).readlines()]
+    else:
+        signal.alarm(1)
+        commands = [l.strip() for l in sys.stdin.readlines()]
+        signal.alarm(0)
 else:
     commands = None
 commands = comm.bcast(commands, root=0)
