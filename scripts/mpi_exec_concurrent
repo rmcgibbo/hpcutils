@@ -1,0 +1,37 @@
+#!/usr/bin/env python
+from mpi4py import MPI
+import subprocess
+import sys
+import signal
+
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
+node = MPI.Get_processor_name()
+
+
+def handler(signum, frame):
+    print >> sys.stderr, 'Failed at reading from std input'
+    comm.Abort()
+    
+
+if size == 1:
+    print >> sys.stderr, 'Only found 1 instance'
+    print >> sys.stderr, 'Run me with mpirun or mpiexec?'
+    sys.exit(1)
+
+if rank == 0:
+    signal.signal(signal.SIGALRM, handler)
+    signal.alarm(1)
+    commands = [l.strip() for l in sys.stdin.readlines()]
+    signal.alarm(0)
+else:
+    commands = None
+commands = comm.bcast(commands, root=0)
+
+for i, command in enumerate(commands):
+    if (i % size) == rank:
+        print 'Executing command %d on node %d' % (i, rank)
+        subprocess.call(command, shell=True)
+
+comm.Barrier()
