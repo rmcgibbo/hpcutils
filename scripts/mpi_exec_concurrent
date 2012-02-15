@@ -34,4 +34,4 @@ for i, command in enumerate(commands):
         print 'Executing command %d on node %d' % (i, rank)
         subprocess.call(command, shell=True)
 
-comm.Barrier()
+#comm.Barrier()
