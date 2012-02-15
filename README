@@ -30,6 +30,19 @@ Some utilities for working on a hpc cluster
      Could be executed from within one of the pbs scripts submitted by pwnq
      if you wanted to be fancy.
      
+6) mpi_exec_concurrent
+   - Run multiple commands in parallel on separate nodes from a single mpi job.
+
+     Concept:
+     You have a single mpi job in the PBS queue that requests 10 nodes, and you
+     want to run a bunch of serial commands, split up between all of the ten nodes.
+
+     Usage:
+     Make a file containing each of the commands that you want to execute on a
+     seperate line, then run
+
+     >> mpirun -np 10 --bynode ./mpi_exec_concurrent file_with_list_of_commands     
+  
 5) auto-git
    - mac specific (10.5+) python code, building off the FSEvents library, that
      tracks changes to files in the working directory and automatically commits    
