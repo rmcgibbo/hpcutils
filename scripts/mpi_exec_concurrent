@@ -1,4 +1,18 @@
 #!/usr/bin/env python
+'''
+Run multiple commands in parallel on seperate nodes from a single mpi job.
+
+Concept:
+You have a single mpi job in the PBS queue that requests 10 nodes, and you
+want to run a bunch of serial commands, split up between all of the ten nodes.
+
+Usage:
+Make a file containing each of the commands that you want to execute on a
+seperate line, then run
+
+>> mpirun -np 10 --bynode ./mpi_exec_concurrent file_with_list_of_commands
+'''
+
 from mpi4py import MPI
 import subprocess
 import sys
