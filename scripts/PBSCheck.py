@@ -44,7 +44,7 @@ class Cluster:
                     self.Jobs[cjob.Number] = cjob
                 # Initialize the new class
                 cjob = Job()
-                cjob.Number = int(line.split()[-1].split('.')[0])
+                cjob.Number = int(line.split()[-1].split('.')[0].split('[')[0])
             elif line.split()[0] == "Job_Owner":
                 cjob.User = line.split()[-1].split('@')[0]
             elif line.split()[0] == "Job_Name":
@@ -96,7 +96,7 @@ class Cluster:
             elif line.split()[0] == "np":
                 cnode.Num_Procs = int(line.split()[-1])
             elif line.split()[0] == "jobs":
-                cnode.JobNumbers = set([int(i.split("/")[-1].split('.')[0]) for i in line.split("=")[-1].split(",")])
+                cnode.JobNumbers = set([int(i.split("/")[-1].split('.')[0].split('[')[0]) for i in line.split("=")[-1].split(",")])
                 cnode.Num_Running = len(line.split()) - 2
             elif line.split()[0] == "status":
                 # The mighty genexp
