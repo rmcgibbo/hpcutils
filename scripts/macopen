@@ -33,7 +33,7 @@ files = sys.argv[1:]
 for file in files:
     if not (os.path.exists(file) and os.path.isfile(file)):
         print >> sys.stderr, 'Error: %s: File does not exists %s' % (sys.argv[0], file)
-remote_files = ['/tmp/%s' % os.path.basename(f) for f in files]
+remote_files = ['/tmp/%d-%s' % (i, os.path.basename(f)) for i,f in enumerate(files)]
 
 # get the ip address of the localhost from the env variable
 localhost = os.environ['SSH_CLIENT'].split()[0]
@@ -43,12 +43,16 @@ if localhost in config['localhost']:
    localhost = config['localhost'][os.environ['SSH_CLIENT'].split()[0]]
 
 
-# two commands to be executed
-copy_cmd = 'scp %s %s:/tmp/' % (' '.join(files), localhost)
 open_cmd = 'ssh %s "open %s"' % (localhost, ' '.join(remote_files))
 
 try:
-    subprocess.check_call(copy_cmd, shell=True)
+    #subprocess.check_call(copy_cmd, shell=True)
+    processes=[]
+    for i,f in enumerate(files):
+        copy_cmd = 'scp %s %s:%s' % (f, localhost, remote_files[i])
+        processes.append(subprocess.Popen(copy_cmd, shell=True))
+    for p in processes:
+        p.wait()
     subprocess.check_call(open_cmd, shell=True)
 except subprocess.CalledProcessError as e:
     print >> sys.stderr, 'Error: %s:' % sys.argv[0],
